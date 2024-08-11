@@ -5,13 +5,14 @@ use ieee.numeric_std.all;
 
 Entity State_Machine IS Port
 (
-	clk_input, reset, NSRequest, EWRequest						: IN std_logic;
-	NSGreenBlink, NSGreen, NSAmber, NSRed 						: OUT std_logic;
-	EWGreenBlink, EWGreen, EWAmber, EWRed 						: OUT std_logic;
-	NSCrossingDisplay, EWCrossingDisplay 						: OUT std_logic;
-	NSReset, EWReset 													: OUT std_logic;
-	state_num															: OUT std_logic_vector(3 downto 0);
-	blinkSignal 														: IN std_logic
+	clk_input, clk_enable, reset, NSRequest, EWRequest			: IN std_logic;
+ 	NSGreenBlink, NSGreen, NSAmber, NSRed 					: OUT std_logic;
+ 	EWGreenBlink, EWGreen, EWAmber, EWRed 					: OUT std_logic;
+ 	NSCrossingDisplay, EWCrossingDisplay 					: OUT std_logic;
+ 	NSReset, EWReset 							: OUT std_logic;
+ 	state_num								: OUT std_logic_vector(3 downto 0);
+ 	blinkSignal			 					: IN std_logic
+	 
 );
 END ENTITY;
  
@@ -42,7 +43,7 @@ BEGIN
 	IF(rising_edge(clk_input)) THEN
 		IF (reset = '1') THEN
 			current_state <= GBLINKNS1;
-		ELSIF (reset = '0') THEN
+		ELSIF (clk_enable = '1') THEN
 			current_state <= next_State;
 		END IF;
 	END IF;

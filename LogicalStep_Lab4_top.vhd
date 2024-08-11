@@ -73,26 +73,26 @@ ARCHITECTURE SimpleCircuit OF LogicalStep_Lab4_top IS
 
 Component State_Machine Port
 (
-	 clk_input, reset, NSRequest, EWRequest			: IN std_logic;
-	 NSGreenBlink, NSGreen, NSAmber, NSRed 			: OUT std_logic;
-	 EWGreenBlink, EWGreen, EWAmber, EWRed 			: OUT std_logic;
-	 NSCrossingDisplay, EWCrossingDisplay 				: OUT std_logic;
-	 NSReset, EWReset : OUT std_logic;
-	 state_num			: OUT std_logic_vector(3 downto 0);
-	 blinkSignal : IN std_logic
+	 clk_input, clk_enable, reset, NSRequest, EWRequest			: IN std_logic;
+	 NSGreenBlink, NSGreen, NSAmber, NSRed 					: OUT std_logic;
+	 EWGreenBlink, EWGreen, EWAmber, EWRed 					: OUT std_logic;
+	 NSCrossingDisplay, EWCrossingDisplay 					: OUT std_logic;
+	 NSReset, EWReset 							: OUT std_logic;
+	 state_num								: OUT std_logic_vector(3 downto 0);
+	 blinkSignal			 					: IN std_logic
 	 
  );
 END Component;  
 ----------------------------------------------------------------------------------------------------
-	CONSTANT	sim_mode																: boolean := FALSE;  -- set to FALSE for LogicalStep board downloads																						-- set to TRUE for SIMULATIONS
-	SIGNAL rst, rst_n_filtered, synch_rst			    					: std_logic; -- signals to reset the state machine, synchronizer, and holding register
-	SIGNAL sm_clken, blink_sig													: std_logic; -- outputs of clock generator component for clock and blink signals to state machines
-	SIGNAL pb_n_filtered, pb, pb_sync										: std_logic_vector(3 downto 0);  -- versions of the push button arrays
-	SIGNAL NSRequest, EWRequest 												: STD_LOGIC; -- request signals for the north-south direction and east-west directions
-	SIGNAL NSGreenBlink, NSGreen, NSAmber, NSRed 						: std_logic; -- outputs to the north-south segment: blinking green, solid green, amber, and red
-	SIGNAL EWGreenBlink, EWGreen, EWAmber, EWRed 						: std_logic; -- output to the east-west segment: blinking green, solid green, amber, and red
-	SIGNAL NSReset, EWReset 													: std_logic; -- The reset signals for the NS and EW requests, input into the holding register to clear them
-	SIGNAL state_number 															: std_logic_vector(3 downto 0); -- the 4-bit state number
+	CONSTANT	sim_mode							: boolean := FALSE;  -- set to FALSE for LogicalStep board downloads																						-- set to TRUE for SIMULATIONS
+	SIGNAL rst, rst_n_filtered, synch_rst			    			: std_logic; -- signals to reset the state machine, synchronizer, and holding register
+	SIGNAL sm_clken, blink_sig							: std_logic; -- outputs of clock generator component for clock and blink signals to state machines
+	SIGNAL pb_n_filtered, pb, pb_sync						: std_logic_vector(3 downto 0);  -- versions of the push button arrays
+	SIGNAL NSRequest, EWRequest 							: STD_LOGIC; -- request signals for the north-south direction and east-west directions
+	SIGNAL NSGreenBlink, NSGreen, NSAmber, NSRed 					: std_logic; -- outputs to the north-south segment: blinking green, solid green, amber, and red
+	SIGNAL EWGreenBlink, EWGreen, EWAmber, EWRed 					: std_logic; -- output to the east-west segment: blinking green, solid green, amber, and red
+	SIGNAL NSReset, EWReset 							: std_logic; -- The reset signals for the NS and EW requests, input into the holding register to clear them
+	SIGNAL state_number 								: std_logic_vector(3 downto 0); -- the 4-bit state number
 	
 BEGIN
 ----------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ HRNS : holding_register port map (clkin_50,synch_rst,NSReset,pb_sync(0), NSReque
 SYNC1: synchronizer     port map (clkin_50,synch_rst, pb(1), pb_sync(1)); -- Input synchronizer for the EW direction
 HREW : holding_register port map (clkin_50,synch_rst,EWReset,pb_sync(1), EWRequest); -- east-west holding register
 
-SMAC: State_Machine port map(sm_clken, synch_rst, NSRequest, EWRequest, NSGreenBlink, NSGreen, NSAmber, NSRed, EWGreenBlink, EWGreen, EWAmber, EWRed, leds(0), leds(2), NSReset, EWReset, state_number, blink_sig); -- the state machine instance
+SMAC: State_Machine port map(clkin_50, sm_clken, synch_rst, NSRequest, EWRequest, NSGreenBlink, NSGreen, NSAmber, NSRed, EWGreenBlink, EWGreen, EWAmber, EWRed, leds(0), leds(2), NSReset, EWReset, state_number, blink_sig); -- the state machine instance
 
 DSPLY: segment7_mux port map(clkin_50, EWAmber & "00" & EWGreen & "00" & EWRed, NSAmber & "00" & NSGreen & "00" & NSRed , seg7_data, seg7_char1, seg7_char2); -- concatenations for the outputs to the two 7-segment displays
 

@@ -16,6 +16,7 @@ The components of the project include:
 3. A two-stage synchronizer to mitigate metastability.
 4. A signal generator to produce the clock signals, a 1 Hz `sm_clken` and a 4 Hz `blinkSignal` to trigger state machine state changes and for the LED indicators on the FPGA, respectively. 
 5. A module to light up the seven-segment display.
+6. A component to filter push button signals, reducing debouncing effects.
 
 The state transition sequence involved is:
 
